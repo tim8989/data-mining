@@ -63,9 +63,9 @@ Dataset_txt
  | |-XX_interpretation_label.txt
  | ...
 ```
-## Environment settings
+## Environment settings requirements.txt
 原本的環境設定較舊，故改成下方設定，
-(requirements.txt)
+```
 matplotlib==3.3.4
 numpy==1.19.5
 pandas==1.1.5
@@ -73,7 +73,7 @@ tqdm==4.64.0
 scipy==1.5.4
 scikit-learn==0.24.2
 torch==1.13.0
-
+```
 ## Requirements
 
 Dependency can be installed using the following command:
@@ -86,12 +86,14 @@ pip install -r requirements.txt
 使用論文提供的資料庫去作訓練，共有合成集與真實集各三個，共六個。
 
 -Parameter description(參數說明)
+```
  1.–dataset_name：指定數據集的名稱
  2.–retrain：啟用重新訓練模式
  3.–freeze_patienc：設置凍結模型層（freeze layers）的耐心次數
  4.–freeze_delta：設置凍結模型層的性能提升閾值
  5.–stop_patience：設置訓練的早停耐心次數
  6.–stop_delta：設置早停的性能提升閾值。
+```
  參數整體邏輯
 
 	1.	數據集選擇：--dataset_name 指定使用的數據集（如 SyntheticMiddle）。
