@@ -19,13 +19,7 @@ This is PyTorch implementation of AERO in the following paper:
 
 ```
 
-## Requirements
 
-Dependency can be installed using the following command:
-
-```
-pip install -r requirements.txt
-```
 
 ## Data Preparation
 
@@ -69,23 +63,51 @@ Dataset_txt
  | |-XX_interpretation_label.txt
  | ...
 ```
+## Environment settings
+原本的環境設定較舊，故改成下方設定，
+(requirements.txt)
+matplotlib==3.3.4
+numpy==1.19.5
+pandas==1.1.5
+tqdm==4.64.0
+scipy==1.5.4
+scikit-learn==0.24.2
+torch==1.13.0
 
-### Notices:
+## Requirements
 
-- The row in XX_train.txt(XX_test.txt) represents a timestamp and the coloum represents a object. However, the first coloum represents timestamps.
-- In interpretation_label.txt, every row represents a true anomaly segment. For example, "2200-2900:48" represents object 48 occurs a anomaly during 2200-2900 timestamps.
-- The object number in XX_interpretation_label.txt starts from 1 instead of 0.
-
-## Dataset Preprocessing
-
-Preprocess all datasets using the command
+Dependency can be installed using the following command:
 
 ```
-python3 src/processing.py AstrosetMiddle
+pip install -r requirements.txt
 ```
 
 ## Model Training
+使用論文提供的資料庫去作訓練，共有合成集與真實集各三個，共六個。
 
+-Parameter description(參數說明)
+ 1.–dataset_name：指定數據集的名稱
+ 2.–retrain：啟用重新訓練模式
+ 3.–freeze_patienc：設置凍結模型層（freeze layers）的耐心次數
+ 4.–freeze_delta：設置凍結模型層的性能提升閾值
+ 5.–stop_patience：設置訓練的早停耐心次數
+ 6.–stop_delta：設置早停的性能提升閾值。
+ 參數整體邏輯
+
+	1.	數據集選擇：--dataset_name 指定使用的數據集（如 SyntheticMiddle）。
+	2.	重新訓練：--retrain 強制重新訓練模型，忽略現有的權重檔案。
+	3.	凍結策略：通過 --freeze_patience 和 --freeze_delta 動態凍結部分模型層，提升訓練效率。
+	4.	早停策略：通過 --stop_patience 和 --stop_delta 動態停止訓練，避免過度訓練和資源浪費。
+
+整體流程範例
+
+在這段指令中，訓練將針對 SyntheticMiddle 數據集執行，並具備以下行為：
+
+	1.	如果模型性能在 5 次迭代內提升幅度低於 0.01，部分層的參數將凍結。
+	2.	如果性能在 5 次迭代內無提升（提升幅度小於 0.01），訓練將提前停止。
+	3.	模型不使用之前的訓練結果，而是重新開始訓練。
+
+Command operation指令操作：
 - SyntheticMiddle
 
 ```
@@ -122,14 +144,6 @@ python3 main.py  --dataset_name AstrosetHigh  --retrain --freeze_patience 5 --fr
 
 ```
 python3 main.py  --dataset_name AstrosetLow  --retrain --freeze_patience 5 --freeze_delta 0.005 --stop_patience 5 --stop_delta 0.001
-```
-
-## Run the trained Model
-
-You can run the following command to evaluate the test datasets using the trained model.
-
-```
-python3 main.py  --dataset_name XX --test
 ```
 
 # data-mining
